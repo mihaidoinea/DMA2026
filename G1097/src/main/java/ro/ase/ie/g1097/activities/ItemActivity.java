@@ -28,8 +28,6 @@ import ro.ase.ie.g1097.model.Movie;
 public class ItemActivity extends AppCompatActivity {
 
     private EditText etRelease;
-    private EditText etTitle;
-    private Button btnSave;
     private int position = -1;   // -1 = insert mode
     private Calendar releaseCal = Calendar.getInstance();
     private final SimpleDateFormat dateFormat =
@@ -45,61 +43,30 @@ public class ItemActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        btnSave = findViewById(R.id.btnMovieAction);
-        etRelease = findViewById(R.id.etRelease);
-        etTitle = findViewById(R.id.etTitle);
 
+        initControls();
+        initListeners();
+
+        Intent intent = getIntent();
+        Movie existing = IntentCompat.getSerializableExtra(intent, MainActivity.MOVIE_EXTRA, Movie.class);
+        if (existing != null) {
+            position = intent.getIntExtra(MainActivity.POSITION_EXTRA, -1);
+            //fillForm(existing);
+            setTitle("Edit movie");
+        }
+    }
+
+    private void initControls() {
+        etRelease = findViewById(R.id.etRelease);
+    }
+
+    private void initListeners() {
         etRelease.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showReleaseDatePicker();
             }
         });
-
-        Intent intent = getIntent();
-        Movie existing = IntentCompat.getSerializableExtra(intent, MainActivity.MOVIE_EXTRA, Movie.class);
-        if (existing != null) {
-            position = intent.getIntExtra(MainActivity.POSITION_EXTRA, -1);
-//            fillForm(existing);
-            btnSave.setText("Update Movie");
-            setTitle("Edit movie");
-        }
-
-        btnSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Snackbar.make(findViewById(R.id.main), "Respond to MainActivity?", Snackbar.LENGTH_LONG)
-                        .setAction("Yes", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Movie movie = fillMovie();
-                                if (movie == null) return;
-
-                                Intent result = new Intent();
-                                result.putExtra(MainActivity.MOVIE_EXTRA, movie);
-                                result.putExtra(MainActivity.POSITION_EXTRA, position);
-                                setResult(RESULT_OK, result);
-                                finish();
-                            }
-                        })
-                        .show();
-            }
-        });
-    }
-
-    private Movie fillMovie() {
-        String title = etTitle.getText().toString();
-        if (title.isEmpty()) {
-            etTitle.setError("Please enter a title");
-            return null;
-        }
-        String release = etRelease.getText().toString();
-        if (release.isEmpty()) {
-            etRelease.setError("Please select a release date");
-            return null;
-        }
-        Movie movie = new Movie(releaseCal.getTime(), title);
-        return movie;
     }
 
     private void showReleaseDatePicker() {

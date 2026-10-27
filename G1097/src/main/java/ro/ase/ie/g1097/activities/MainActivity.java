@@ -28,9 +28,9 @@ public class MainActivity extends AppCompatActivity {
 
     protected static final String POSITION_EXTRA = "position";
     protected static final String MOVIE_EXTRA = "movie";
+    private FloatingActionButton fabInsert;
     private ListView listView;
     private ActivityResultLauncher<Intent> launcher;
-    private FloatingActionButton fabInsert;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,16 +42,10 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        fabInsert = findViewById(R.id.floatingActionButton);
-        fabInsert.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, ItemActivity.class);
-                launcher.launch(intent);
-            }
-        });
 
-        listView = findViewById(R.id.listView);
+        initControls();
+        initListeners();
+
         launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 new ActivityResultCallback<ActivityResult>() {
                     @Override
@@ -63,16 +57,30 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    private void initListeners() {
+        fabInsert.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, ItemActivity.class);
+                launcher.launch(intent);
+            }
+        });
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(MainActivity.this, ItemActivity.class);
-                intent.putExtra(MOVIE_EXTRA, new Movie(new Date(), "Movie " + position));
+//                intent.putExtra(MOVIE_EXTRA, new Movie(new Date(), "Movie " + position));
                 launcher.launch(intent);
             }
         });
+    }
 
+    private void initControls() {
+        fabInsert = findViewById(R.id.floatingActionButton);
+        listView = findViewById(R.id.listView);
     }
 }
 
