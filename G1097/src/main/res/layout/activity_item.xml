@@ -116,7 +116,7 @@
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:hintEnabled="false"
+                    app:hintEnabled="true"
                     app:startIconContentDescription="Release date"
                     app:startIconDrawable="@android:drawable/ic_menu_my_calendar">
 
