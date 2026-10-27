@@ -27,6 +27,12 @@
         <item>Drama</item>
         <item>Action</item>
         <item>Comedy</item>
+        <item>Horror</item>
+        <item>Romance</item>
+        <item>Thriller</item>
+        <item>Sci-Fi</item>
         <item>Adventure</item>
+        <item>Fantasy</item>
+        <item>Mystery</item>
     </string-array>
 </resources>
