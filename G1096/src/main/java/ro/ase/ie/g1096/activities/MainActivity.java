@@ -1,4 +1,4 @@
-package ro.ase.ie.g1096;
+package ro.ase.ie.g1096.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,13 +17,19 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.ArrayList;
+
+import ro.ase.ie.g1096.R;
 
 public class MainActivity extends AppCompatActivity {
 
+    protected static final String POSITION_EXTRA = "position";
+    protected static final String MOVIE_EXTRA = "movie";
+    private FloatingActionButton fabInsert;
     private ListView listView;
     private ActivityResultLauncher<Intent> launcher;
-    ArrayList<String> items;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,36 +42,43 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        initControls();
+        initListeners();
+
         launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult o) {
+                        if(o.getResultCode() == RESULT_OK)
+                        {
+                            Intent intent = o.getData();
+                            Toast.makeText(MainActivity.this, "response", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
+    private void initListeners() {
+        fabInsert.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onActivityResult(ActivityResult o) {
-                if(o.getResultCode() == RESULT_OK)
-                {
-                    Intent intent = o.getData();
-                    String response = intent.getStringExtra("response");
-                    Toast.makeText(MainActivity.this,
-                            "You've clicked on " + response, Toast.LENGTH_SHORT).show();
-                }
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, ItemActivity.class);
+                launcher.launch(intent);
             }
         });
 
-        listView = findViewById(R.id.listView);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String itemAtPosition = listView.getItemAtPosition(position).toString();
-//                Toast.makeText(MainActivity.this,
-//                        "You've clicked on " + itemAtPosition, Toast.LENGTH_SHORT).show();
-
-                Intent intent = new Intent(getApplicationContext(), ItemActivity.class);
-//                Bundle extras = intent.getExtras();
-//                extras.putString("item", itemAtPosition);
-                intent.putExtra("item", itemAtPosition);
+                Intent intent = new Intent(MainActivity.this, ItemActivity.class);
+//                intent.putExtra(MOVIE_EXTRA, new Movie(new Date(), "Movie " + position));
                 launcher.launch(intent);
-
             }
         });
+    }
 
+    private void initControls() {
+        fabInsert = findViewById(R.id.floatingActionButton);
+        listView = findViewById(R.id.listView);
     }
 }
