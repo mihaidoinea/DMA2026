@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="12dp"
     android:layout_marginVertical="6dp"
+    app:cardBackgroundColor="@color/white"
     app:cardCornerRadius="16dp"
     app:cardElevation="3dp"
     app:cardUseCompatPadding="true">
@@ -22,27 +22,27 @@
             android:layout_width="96dp"
             android:layout_height="140dp"
             android:background="#11000000"
-            android:scaleType="centerCrop"
             android:contentDescription="Movie poster"
+            android:scaleType="centerCrop"
             android:src="@android:drawable/ic_menu_gallery" />
 
         <!-- Info column -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_marginStart="12dp"
+            android:layout_weight="1"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/movieTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
                 android:text="Movie title"
                 android:textSize="20sp"
-                android:textStyle="bold"
-                android:maxLines="2"
-                android:ellipsize="end" />
+                android:textStyle="bold" />
 
             <!-- genre · release year, e.g. "Sci-Fi · 2021" -->
             <TextView
@@ -51,8 +51,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:text="Genre · Year"
-                android:textSize="14sp"
-                android:textColor="#757575" />
+                android:textColor="#757575"
+                android:textSize="14sp" />
 
             <!-- Rating -->
             <LinearLayout
@@ -67,9 +67,9 @@
                     style="?android:attr/ratingBarStyleSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:isIndicator="true"
                     android:numStars="5"
-                    android:stepSize="0.5"
-                    android:isIndicator="true" />
+                    android:stepSize="0.5" />
 
                 <TextView
                     android:id="@+id/movieRatingValue"
@@ -77,8 +77,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="6dp"
                     android:text="4.5"
-                    android:textSize="13sp"
-                    android:textColor="#757575" />
+                    android:textColor="#757575"
+                    android:textSize="13sp" />
             </LinearLayout>
 
             <!-- Facts: duration + budget -->
@@ -88,8 +88,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
                 android:text="142 min  ·  $160M"
-                android:textSize="13sp"
-                android:textColor="#9E9E9E" />
+                android:textColor="#9E9E9E"
+                android:textSize="13sp" />
 
             <!-- Status chips: approval, watched, watchlist -->
             <com.google.android.material.chip.ChipGroup
@@ -105,8 +105,8 @@
                     style="@style/Widget.Material3.Chip.Suggestion"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Approved"
                     android:clickable="false"
+                    android:text="Approved"
                     app:chipMinHeight="28dp"
                     app:ensureMinTouchTargetSize="false" />
 
@@ -115,10 +115,10 @@
                     style="@style/Widget.Material3.Chip.Suggestion"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Watched"
                     android:clickable="false"
-                    app:chipMinHeight="28dp"
+                    android:text="Watched"
                     app:chipIcon="@android:drawable/checkbox_on_background"
+                    app:chipMinHeight="28dp"
                     app:ensureMinTouchTargetSize="false" />
 
                 <com.google.android.material.chip.Chip
@@ -126,8 +126,8 @@
                     style="@style/Widget.Material3.Chip.Suggestion"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Watchlist"
                     android:clickable="false"
+                    android:text="Watchlist"
                     app:chipMinHeight="28dp"
                     app:ensureMinTouchTargetSize="false" />
             </com.google.android.material.chip.ChipGroup>

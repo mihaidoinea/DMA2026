@@ -1,4 +1,6 @@
 package ro.ase.ie.g1096.adapter;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +25,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     /** Optional callbacks so the activity can react to taps. */
     public interface OnMovieListener {
         void onMovieClick(Movie movie, int position);
+        void onMovieLongClick(Movie movie, int position);
+
     }
 
     private final List<Movie> movies;
@@ -55,6 +59,27 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         h.rating.setRating(m.getRating());
         h.ratingValue.setText(String.format(Locale.US, "%.1f", m.getRating()));
         h.facts.setText(m.getDuration() + " min  · " + formatBudget(m.getBudget()));
+        h.chipApproval.setText(m.getApproval());
+        h.chipWatched.setChecked(m.isWatched());
+        h.chipWatchlist.setChecked(m.isOnWatchlist());
+
+        //G verde, pg portocaliu, r nc rosu
+        if(m.getApproval().toLowerCase().equals("g") || m.getApproval().toLowerCase().equals("pg")){
+            h.chipApproval.setChipBackgroundColor(ColorStateList.valueOf(Color.rgb(0, 230, 0)));
+        }
+        else if(m.getApproval().toLowerCase().equals("pg-13")){
+            h.chipApproval.setChipBackgroundColor(ColorStateList.valueOf(Color.rgb(234, 130, 0)));
+        }
+        else {
+            h.chipApproval.setChipBackgroundColor(ColorStateList.valueOf(Color.rgb(234, 0, 0)));
+        }
+
+        if(m.isWatched()){
+            h.chipWatched.setVisibility(View.VISIBLE);
+        } else {
+            h.chipWatched.setVisibility(View.GONE);
+
+        }
     }
 
     @Override
@@ -99,6 +124,16 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
                     listener.onMovieClick(movies.get(pos), pos);
                 }
             });
+            v.setOnLongClickListener(click -> {
+                int pos = getBindingAdapterPosition();
+                if (pos != RecyclerView.NO_POSITION && listener != null) {
+                    listener.onMovieLongClick(movies.get(pos), pos);
+                    return  true;
+                }
+                return false;
+            });
+
+
         }
     }
 }

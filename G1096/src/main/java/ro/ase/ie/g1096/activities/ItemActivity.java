@@ -26,6 +26,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.materialswitch.MaterialSwitch;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -51,6 +52,10 @@ public class ItemActivity extends AppCompatActivity {
     private Button btMovieAction;
     private TextView tvDurationValue;
     private TextView tvWatchedValue;
+
+    private Boolean validTitle;
+    private Boolean validDate;
+    private Boolean validBuget;
 
     private int position = -1;   // -1 = insert mode
     private Calendar releaseCal = Calendar.getInstance();
@@ -136,7 +141,11 @@ public class ItemActivity extends AppCompatActivity {
         btMovieAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveMovie();
+                if(validBuget==false || validDate==false || validTitle==false){
+                    Snackbar.make(ItemActivity.this.findViewById(R.id.main), "Invalid values detected", Snackbar.LENGTH_LONG).setAction("Ok", v1 -> {}).show();
+                } else {
+                    saveMovie();
+                }
             }
         });
         swWatched.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -161,9 +170,82 @@ public class ItemActivity extends AppCompatActivity {
 
             }
         });
+
+        etTitle.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                String title = etTitle.getText().toString();
+                if(title.isEmpty() || title == null){
+                    validTitle = false;
+                    etTitle.setError("Title cannot be null");
+                }
+            }
+        });
+
+        etRelease.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                int year_int = Integer.parseInt(new SimpleDateFormat("yyyy", Locale.US).format(releaseCal.getTime()));
+
+                if(year_int >= 1900 && year_int <= 2030){
+                    etRelease.setError("Release cannot be null");
+                }
+            }
+        });
+
+        etBudget.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                //check if the string is null
+                if(etBudget.getText().toString() == null || etBudget.getText().toString().isEmpty()){
+                    etBudget.setError("Budget is invalid");
+                }
+            }
+        });
     }
 
     private void saveMovie() {
+        validTitle = true;
+        String title = etTitle.getText().toString();
+        if(title.isEmpty() || title == null){
+            validTitle = false;
+            etTitle.setError("Title cannot be null");
+        } else {
+            validTitle = true;
+        }
+
+        validDate = true;
+        SimpleDateFormat sdfYear = new SimpleDateFormat("yyyy", Locale.US);
+
+        String year = sdfYear.format(releaseCal.getTime());
+        int year_int = Integer.parseInt(year);
+
+        if(year_int >= 1900 && year_int <= 2030){
+            validDate = true;
+            etRelease.setError("Release cannot be null");
+        } else {
+            validDate = false;
+        }
+
+        validBuget = true;
+        if(etBudget.getText().toString() == null || etBudget.getText().toString().isEmpty()){
+            validBuget = false;
+            etBudget.setError("Budget is invalid");
+        } else {
+            Double budget = Double.parseDouble(etBudget.getText().toString());
+
+            if(budget.isNaN() || budget==null || budget<0){
+                validBuget = false;
+                etBudget.setError("Budget is invalid");
+            } else {
+                validBuget = true;
+            }
+        }
+
+        if(validBuget==false || validDate==false || validTitle==false){
+            Snackbar.make(ItemActivity.this.findViewById(R.id.main), "Invalid values detected", Snackbar.LENGTH_LONG).setAction("Ok", v1 -> {}).show();
+        }
+
         Movie movie = new Movie();
         movie.setTitle(etTitle.getText().toString());
         movie.setRelease(releaseCal.getTime());

@@ -1,8 +1,11 @@
 package ro.ase.ie.g1096.activities;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResult;
@@ -17,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -37,6 +41,10 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnMo
     private final List<Movie> movies = new ArrayList<>();
     //    private ArrayAdapter<Movie> movieAdapter;
     private MovieAdapter movieAdapter;
+
+    private Button sortingButton;
+    private Button ratingButton;
+    private Button statisticsButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +97,55 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnMo
             }
         });
 
+        sortingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                movies.sort((o1, o2) -> {
+                    return o1.getTitle().compareTo(o2.getTitle());
+                });
+                movieAdapter.notifyDataSetChanged();
+            }
+        });
+
+        ratingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                movies.sort((o1, o2) -> {
+                    return Float.compare(o2.getRating(), o1.getRating());
+                });
+                movieAdapter.notifyDataSetChanged();
+            }
+        });
+
+        statisticsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                float totalBuget = 0.0f;
+
+                float avgRating = 0.0f;
+
+                int numberOfMovies = movies.size();
+
+                for(Movie mov : movies) {
+                    totalBuget += mov.getBudget();
+                    avgRating += mov.getRating();
+                }
+                avgRating /= numberOfMovies;
+                totalBuget = Math.round(totalBuget);
+
+                new AlertDialog.Builder(MainActivity.this).setTitle("Statistics").setMessage("" +
+                        "Total Buget: " + totalBuget +
+                        "\n Avg rating: " + avgRating +
+                        "\n Nr Movies: " + numberOfMovies)
+                        .setNeutralButton("Ok", (dialog, which) ->
+                {
+
+                }).show();
+
+            }
+        });
+
+
        /* listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -102,6 +159,12 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnMo
         recyclerView = findViewById(R.id.rvMovies);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(movieAdapter);
+
+        sortingButton = findViewById(R.id.sortingButton);
+        ratingButton = findViewById(R.id.ratingButton);
+        statisticsButton = findViewById(R.id.statisticsButton);
+
+
     }
 
     private void addSampleMovies() {
@@ -149,4 +212,37 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnMo
         intent.putExtra(POSITION_EXTRA, position);
         launcher.launch(intent);
     }
+
+    public void onMovieLongClick(Movie movie, int position) {
+        new AlertDialog.Builder(MainActivity.this).setTitle("Delete movie").setMessage(movie.getTitle())
+                .setNegativeButton("Delete", (dialog, which) -> {
+
+                    movies.remove(movie);
+                    movieAdapter.notifyDataSetChanged();
+
+                    Snackbar.make(MainActivity.this.findViewById(R.id.main), "Undo delete",  Snackbar.LENGTH_LONG).setAction("Recover", v -> {
+                        movies.add(movie);
+                        movieAdapter.notifyDataSetChanged();
+
+                        Toast.makeText(this, "Restored changes", Toast.LENGTH_SHORT).show();
+                    }).show();
+
+
+                }).setPositiveButton("Cancel", null).show();
+    }
 }
+
+/*
+new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(
+0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+@Override
+public boolean onMove(RecyclerView rv, RecyclerView.ViewHolder a,
+RecyclerView.ViewHolder b) {
+return false;
+}
+@Override
+public void onSwiped(RecyclerView.ViewHolder h, int direction) {
+deleteAt(h.getBindingAdapterPosition());
+}
+}).attachToRecyclerView(binding.list);  
+*/
